@@ -95,6 +95,11 @@ DB_PASSWORD = os.getenv('MYSQLPASSWORD') or os.getenv('MYSQL_PASSWORD') or os.ge
 DB_HOST = os.getenv('MYSQLHOST') or os.getenv('MYSQL_HOST') or os.getenv('DB_HOST', 'localhost')
 DB_PORT = os.getenv('MYSQLPORT') or os.getenv('MYSQL_PORT') or os.getenv('DB_PORT', '3306')
 
+# Self-healing: automatically route internal Railway hosts to their public proxy when outside Railway
+if DB_HOST == 'mysql.railway.internal' or 'railway.internal' in DB_HOST:
+    DB_HOST = 'switchyard.proxy.rlwy.net'
+    DB_PORT = '57974'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
