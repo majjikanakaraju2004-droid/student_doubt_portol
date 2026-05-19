@@ -3,4 +3,4 @@ services:
     name: student-doubt-backend
     env: python
     buildCommand: "./build.sh"
-    startCommand: "gunicorn --chdir backend backend.wsgi:application"
+    startCommand: "gunicorn backend.wsgi:application"
