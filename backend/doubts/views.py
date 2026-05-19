@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Count, Q
 from django.utils import timezone
+import threading
 
 from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
@@ -102,13 +103,18 @@ def notify_teachers_for_doubt(doubt):
         )
         email = teacher.contact_email or teacher.email
         if email and settings.EMAIL_HOST_USER:
-            send_mail(
-                'New Student Doubt — Synycs',
-                f'Subject: {doubt.subject}\nTopic: {doubt.topic}\n\n{doubt.question}',
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
-                fail_silently=True,
-            )
+            def send_teacher_email(to_email):
+                try:
+                    send_mail(
+                        'New Student Doubt — Synycs',
+                        f'Subject: {doubt.subject}\nTopic: {doubt.topic}\n\n{doubt.question}',
+                        settings.DEFAULT_FROM_EMAIL,
+                        [to_email],
+                        fail_silently=True,
+                    )
+                except Exception as e:
+                    print(f"Failed to send email to teacher: {e}")
+            threading.Thread(target=send_teacher_email, args=(email,)).start()
 
 
 def doubts_queryset_for_user(user):
@@ -215,14 +221,20 @@ def submit_answer(request, pk):
     )
     email = student_user.contact_email or student_user.email
     if email and settings.EMAIL_HOST_USER:
-        send_mail(
-            'Doubt Resolved — Synycs',
-            f'Hello {student_user.full_name or student_user.username},\n\n'
-            f'Your doubt on "{doubt.topic}" has been answered.\n\n{answer}',
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
-            fail_silently=True,
-        )
+        def send_notification_email():
+            try:
+                send_mail(
+                    'Doubt Resolved — Synycs',
+                    f'Hello {student_user.full_name or student_user.username},\n\n'
+                    f'Your doubt on "{doubt.topic}" has been answered.\n\n{answer}',
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email],
+                    fail_silently=True,
+                )
+            except Exception as e:
+                print(f"Failed to send email: {e}")
+                
+        threading.Thread(target=send_notification_email).start()
 
     return Response({
         'message': 'Answer submitted successfully',
