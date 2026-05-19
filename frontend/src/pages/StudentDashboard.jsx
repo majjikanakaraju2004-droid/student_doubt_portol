@@ -44,6 +44,15 @@ function StudentDashboard() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedFile, setSelectedFile] = useState(null)
 
+  const [expandedResolutions, setExpandedResolutions] = useState({})
+
+  const toggleResolution = (itemId) => {
+    setExpandedResolutions(prev => ({
+      ...prev,
+      [itemId]: !prev[itemId]
+    }))
+  }
+
   const [formData, setFormData] = useState({
     student: JSON.parse(localStorage.getItem('user'))?.id || 1,
     subject: '',
@@ -629,6 +638,18 @@ function StudentDashboard() {
                                   </div>
                                   <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
                                     <p className="text-slate-600 leading-relaxed">{answer}</p>
+                                    {doubt.answer_attachment_url && (
+                                      <div className="mt-3 pt-3 border-t border-slate-200/60">
+                                        <a 
+                                          href={doubt.answer_attachment_url} 
+                                          target="_blank" 
+                                          rel="noreferrer"
+                                          className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-500 transition-colors"
+                                        >
+                                          <Paperclip size={14} /> View Attachment
+                                        </a>
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               ) : (
@@ -696,10 +717,28 @@ function StudentDashboard() {
                       </div>
                       <h3 className="text-xl font-bold text-slate-900 mb-4 flex-1 leading-tight">{item.question}</h3>
                       <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 mb-6">
-                        <p className="text-sm text-slate-400 line-clamp-3 leading-relaxed">{item.answer}</p>
+                        <p className={`text-sm text-slate-600 leading-relaxed ${expandedResolutions[item.id] ? '' : 'line-clamp-3'}`}>
+                          {item.answer}
+                        </p>
+                        {item.answer_attachment && (
+                          <div className="mt-3 pt-3 border-t border-slate-200/60">
+                            <a 
+                              href={item.answer_attachment} 
+                              target="_blank" 
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-500 transition-colors"
+                            >
+                              <Paperclip size={14} /> View Attachment
+                            </a>
+                          </div>
+                        )}
                       </div>
-                      <button className="flex items-center gap-2 text-blue-600 font-bold text-sm hover:gap-3 transition-all mt-auto group">
-                        Read Full Resolution <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                      <button 
+                        onClick={() => toggleResolution(item.id)}
+                        className="flex items-center gap-2 text-blue-600 font-bold text-sm hover:gap-3 transition-all mt-auto group"
+                      >
+                        {expandedResolutions[item.id] ? 'Show Less' : 'Read Full Resolution'}{' '}
+                        <ArrowRight size={16} className={`transition-transform duration-300 ${expandedResolutions[item.id] ? 'rotate-90' : 'group-hover:translate-x-1'}`} />
                       </button>
                     </div>
                   ))
