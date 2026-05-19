@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements
-COPY backend/backend/requirements.txt /tmp/requirements.txt
+COPY requirements.txt /tmp/requirements.txt
 
 # Performance optimization: Install CPU-only PyTorch to minimize image size (~150MB instead of ~3GB)
 # Then install the rest of requirements excluding standard GPU torch
@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r /tmp/requirements-no-torch.txt
 
 # Copy backend codebase
-COPY backend/ /app/
+COPY . /app/
 
 # Normalize line endings for the entrypoint shell script and grant execution permissions
 RUN sed -i 's/\r$//' /app/docker-entrypoint.sh \
