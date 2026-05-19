@@ -71,7 +71,7 @@ def serialize_kb_entry(doubt, request, score=None):
                 if request else doubt.answer_attachment.url
             )
         except Exception:
-            data['answer_attachment'] = doubt.answer_attachment.url
+            data['answer_attachment'] = None
     return data
 
 

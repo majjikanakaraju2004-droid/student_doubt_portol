@@ -47,13 +47,19 @@ class DoubtSerializer(serializers.ModelSerializer):
     def get_attachment_url(self, obj):
         request = self.context.get('request')
         if obj.attachment and request:
-            return request.build_absolute_uri(obj.attachment.url)
+            try:
+                return request.build_absolute_uri(obj.attachment.url)
+            except Exception:
+                return None
         return None
 
     def get_answer_attachment_url(self, obj):
         request = self.context.get('request')
         if obj.answer_attachment and request:
-            return request.build_absolute_uri(obj.answer_attachment.url)
+            try:
+                return request.build_absolute_uri(obj.answer_attachment.url)
+            except Exception:
+                return None
         return None
 
     def get_student_name(self, obj):
