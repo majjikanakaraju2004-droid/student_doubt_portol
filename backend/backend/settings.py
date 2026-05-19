@@ -26,6 +26,7 @@ ALLOWED_HOSTS = [
     for h in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
     if h.strip()
 ]
+ALLOWED_HOSTS.extend(['.onrender.com', 'localhost', '127.0.0.1'])
 
 CORS_ALLOWED_ORIGINS = [
     o.strip()
