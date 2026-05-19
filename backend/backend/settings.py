@@ -37,10 +37,21 @@ CORS_ALLOWED_ORIGINS = [
     if o.strip()
 ]
 
+# Ensure the production Vercel frontend is always allowed
+CORS_ALLOWED_ORIGINS.extend([
+    'https://student-doubt-portol.vercel.app',
+    'http://student-doubt-portol.vercel.app',
+])
+
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
     CORS_ALLOW_ALL_ORIGINS = False
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://student-doubt-portol.vercel.app',
+    'https://student-doubt-portol.onrender.com',
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
