@@ -5,7 +5,13 @@ import { Brain, GraduationCap, ArrowRight, User, Lock, Mail, Hash, BookOpen, Cal
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/'
+let API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/';
+if (!API_BASE.endsWith('/')) {
+  API_BASE += '/';
+}
+if (!API_BASE.endsWith('/api/')) {
+  API_BASE += 'api/';
+}
 
 function Login() {
   const navigate = useNavigate()

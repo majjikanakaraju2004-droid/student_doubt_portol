@@ -4,6 +4,13 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { Shield, Lock, User, ArrowLeft, ArrowRight } from 'lucide-react'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+let API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/';
+if (!API_BASE.endsWith('/')) {
+  API_BASE += '/';
+}
+if (!API_BASE.endsWith('/api/')) {
+  API_BASE += 'api/';
+}
 
 function AdminLogin() {
   const navigate = useNavigate()
@@ -26,7 +33,7 @@ function AdminLogin() {
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/users/admin-login/',
+        `${API_BASE}users/admin-login/`,
         {
           username: adminData.username,
           password: adminData.password
