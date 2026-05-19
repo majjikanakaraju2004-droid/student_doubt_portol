@@ -1,0 +1,33 @@
+# Version control
+.git
+.gitignore
+.github
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+backend/.venv/
+backend/venv/
+backend/db.sqlite3
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.svelte-kit/
+frontend/.next/
+
+# Docker & local configuration
+**/local.env
+**/.env
+**/.env.*
+docker-compose.override.yml
+mysql_data/
+**/media/
+
+# IDEs & System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

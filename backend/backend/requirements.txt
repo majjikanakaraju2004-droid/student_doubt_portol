@@ -1,0 +1,13 @@
+django
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+python-dotenv
+pymysql
+cryptography
+sentence-transformers
+scikit-learn
+torch
+transformers
+pillow
+gunicorn

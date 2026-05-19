@@ -1,0 +1,54 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: synycs-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: doubt_system
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: synycs-backend
+    restart: unless-stopped
+    env_file:
+      - docker.env
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+    volumes:
+      - media_data:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_BASE_URL: /api/
+    container_name: synycs-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
+  media_data:
