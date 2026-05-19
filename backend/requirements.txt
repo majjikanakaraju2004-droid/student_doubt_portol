@@ -11,3 +11,5 @@ torch
 transformers
 pillow
 gunicorn
+cloudinary
+django-cloudinary-storage
