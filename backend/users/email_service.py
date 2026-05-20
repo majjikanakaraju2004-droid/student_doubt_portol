@@ -42,4 +42,13 @@ def send_password_reset_email(*, user, recipient: str, reset_link: str) -> None:
         to=[recipient],
     )
     message.attach_alternative(html_body, 'text/html')
-    message.send(fail_silently=False)
+    
+    import threading
+    def send_email_async():
+        try:
+            message.send(fail_silently=False)
+        except Exception as e:
+            print(f"[ASYNC EMAIL ERROR] Failed to send password reset email: {e}")
+            
+    threading.Thread(target=send_email_async, daemon=True).start()
+
