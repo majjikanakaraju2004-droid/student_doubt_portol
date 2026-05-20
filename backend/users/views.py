@@ -460,5 +460,13 @@ class EmailDebugView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        import users.email_service as es
-        return Response({'last_error': getattr(es, 'last_email_error', 'Not found')})
+        import os
+        from django.conf import settings
+        log_path = os.path.join(settings.BASE_DIR, 'email_debug.txt')
+        try:
+            with open(log_path, 'r') as f:
+                content = f.read()
+        except FileNotFoundError:
+            content = "No emails sent yet (file not found)"
+            
+        return Response({'last_error': content})

@@ -44,16 +44,18 @@ def send_password_reset_email(*, user, recipient: str, reset_link: str) -> None:
     message.attach_alternative(html_body, 'text/html')
     
     import threading
+    import os
+    
     def send_email_async():
-        global last_email_error
+        log_path = os.path.join(settings.BASE_DIR, 'email_debug.txt')
         try:
             message.send(fail_silently=False)
-            last_email_error = "Success: Email sent"
+            with open(log_path, 'w') as f:
+                f.write("Success: Email sent without errors")
         except Exception as e:
-            last_email_error = str(e)
+            with open(log_path, 'w') as f:
+                f.write(f"SMTP Error: {e}")
             print(f"[ASYNC EMAIL ERROR] Failed to send password reset email: {e}")
             
     threading.Thread(target=send_email_async, daemon=True).start()
-
-last_email_error = "No emails sent yet"
 
