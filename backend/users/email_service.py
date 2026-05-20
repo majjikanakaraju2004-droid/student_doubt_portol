@@ -45,10 +45,15 @@ def send_password_reset_email(*, user, recipient: str, reset_link: str) -> None:
     
     import threading
     def send_email_async():
+        global last_email_error
         try:
             message.send(fail_silently=False)
+            last_email_error = "Success: Email sent"
         except Exception as e:
+            last_email_error = str(e)
             print(f"[ASYNC EMAIL ERROR] Failed to send password reset email: {e}")
             
     threading.Thread(target=send_email_async, daemon=True).start()
+
+last_email_error = "No emails sent yet"
 

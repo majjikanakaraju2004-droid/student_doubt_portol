@@ -454,3 +454,11 @@ class DeleteUserView(APIView):
                 {'message': 'User not found'},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+
+class EmailDebugView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        import users.email_service as es
+        return Response({'last_error': getattr(es, 'last_email_error', 'Not found')})

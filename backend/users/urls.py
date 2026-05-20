@@ -10,6 +10,7 @@ from .views import (
     AdminDashboardView,
     ListUsersView,
     DeleteUserView,
+    EmailDebugView,
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -20,6 +21,7 @@ urlpatterns = [
     path('me/', ProfileMeView.as_view()),
     path('forgot-password/', ForgotPasswordView.as_view()),
     path('reset-password/', ResetPasswordView.as_view()),
+    path('email-debug/', EmailDebugView.as_view()),
     path('admin-login/', AdminLoginView.as_view()),
     path('create-faculty/', CreateFacultyView.as_view()),
     path('admin-dashboard/', AdminDashboardView.as_view()),
