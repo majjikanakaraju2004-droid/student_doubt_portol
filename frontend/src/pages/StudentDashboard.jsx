@@ -35,6 +35,7 @@ function StudentDashboard() {
 
   // AI STATES
   const [aiSuggestion, setAiSuggestion] = useState(null)
+  const [subjectSuggestions, setSubjectSuggestions] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [knowledgeResults, setKnowledgeResults] = useState([])
   const [kbBrowse, setKbBrowse] = useState({ subjects: [] })
@@ -145,6 +146,30 @@ function StudentDashboard() {
   }
 
   const [checkTimeout, setCheckTimeout] = useState(null)
+  const [subjectTimeout, setSubjectTimeout] = useState(null)
+
+  const checkSubjectSuggestions = (subjectText) => {
+    if (subjectText.length < 3) {
+      setSubjectSuggestions([])
+      return
+    }
+
+    if (subjectTimeout) clearTimeout(subjectTimeout)
+
+    const timeout = setTimeout(async () => {
+      try {
+        const response = await api.get(`doubts/knowledge-base/?subject=${subjectText}`)
+        // Take top 3 resolved doubts
+        if (Array.isArray(response.data)) {
+          setSubjectSuggestions(response.data.slice(0, 3))
+        }
+      } catch (error) {
+        console.log('Error fetching subject suggestions:', error)
+      }
+    }, 800)
+
+    setSubjectTimeout(timeout)
+  }
 
   const checkSimilarity = (questionText) => {
     if (questionText.length < 10) {
@@ -223,6 +248,9 @@ function StudentDashboard() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
+    if (e.target.name === 'subject') {
+      checkSubjectSuggestions(e.target.value)
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -499,6 +527,23 @@ function StudentDashboard() {
                       />
                     </div>
                   </div>
+
+                  {subjectSuggestions.length > 0 && (
+                    <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 animate-in mb-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Brain size={18} className="text-blue-600" />
+                        <h4 className="font-bold text-blue-800 uppercase tracking-widest text-xs">Top Questions for {formData.subject}</h4>
+                      </div>
+                      <div className="grid grid-cols-1 gap-4">
+                        {subjectSuggestions.map((sug) => (
+                          <div key={sug.id} className="p-4 bg-white rounded-xl border border-blue-200 shadow-sm hover:shadow-md transition-shadow">
+                            <p className="text-sm font-bold text-slate-800 mb-2">{sug.question}</p>
+                            <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{sug.answer}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-400 ml-1">Your Question</label>
